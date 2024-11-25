@@ -1,20 +1,68 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Divider, Form, FormProps, Input, Radio, Space } from "antd";
-import { getSetting } from "../../services/settingService";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  Button,
+  Divider,
+  Flex,
+  Form,
+  FormProps,
+  Input,
+  notification,
+  Spin,
+  Typography,
+} from "antd";
+import { getSetting, updateSetting } from "../../services/settingService";
+import { useEffect } from "react";
+import SettingRequest from "../../payload/request/SettingRequest";
 type FieldType = {
   maxProductCount?: string;
   productAutoRemoveDay?: string;
 };
+const { Title } = Typography;
 export default function Settings() {
-  const { data, isLoading, isError, error } = useQuery({
+  const [api, contextHolder] = notification.useNotification();
+  const queryClient = useQueryClient();
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["setting"],
     queryFn: getSetting,
   });
 
   const [form] = Form.useForm();
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationFn: (values: SettingRequest) => updateSetting(values),
+    onSuccess: () => {
+      api.success({
+        message: "Ayarlar başarıyla güncellendi.",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["setting"],
+      });
+    },
+    onError: (error) => {
+      api.error({
+        message: "Ayarlar güncellenirken bir hata oluştu.",
+        description: error.message,
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue(data.entity);
+    }
+  }, [data]);
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+    const data = {
+      maxProductCount: parseInt(values.maxProductCount!),
+      productAutoRemoveDay: parseInt(values.productAutoRemoveDay!),
+    } as SettingRequest;
+    mutate(data);
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -23,59 +71,65 @@ export default function Settings() {
     console.log("Failed:", errorInfo);
   };
   return (
-    <>
-      <Divider orientation="left" style={{ borderColor: "#7cb305" }}>
-        İlan Ayarları
-      </Divider>
-      <Form
-        layout={"vertical"}
-        form={form}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        initialValues={{ layout: "vertical" }}
-        style={{ maxWidth: 600 }}
-      >
-        <Form.Item
-          label="Maksimum İlan Sayısı"
-          name={"maxProductCount"}
-          tooltip={{
-            title:
-              "Bayinin aynı anda bulunabilecek maksimum ilan sayısını belirler.",
-            icon: <InfoCircleOutlined />,
-          }}
-          rules={[
-            {
-              required: true,
-              message: "Bu alan zorunludur.",
-            },
-          ]}
+    <Spin spinning={isLoading || isFetching}>
+      {contextHolder}
+      <Flex align="center" vertical gap={30}>
+        <Title level={2}>İlan Ayarları</Title>
+        <Form
+          layout={"vertical"}
+          form={form}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          initialValues={{ layout: "vertical" }}
+          style={{ maxWidth: 500, width: "100%" }}
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Otomatik İlan Silme Günü"
-          name={"productAutoRemoveDay"}
-          tooltip={{
-            title:
-              "Belirtilen gün sayısından sonra bayinin ilanları otomatik olarak kaldırılır.",
-            icon: <InfoCircleOutlined />,
-          }}
-          rules={[
-            {
-              required: true,
-              message: "Bu alan zorunludur.",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+          <Form.Item
+            label="Maksimum İlan Sayısı"
+            name={"maxProductCount"}
+            tooltip={{
+              title:
+                "Bayinin aynı anda bulunabilecek maksimum ilan sayısını belirler.",
+              icon: <InfoCircleOutlined />,
+            }}
+            rules={[
+              {
+                required: true,
+                message: "Bu alan zorunludur.",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Otomatik İlan Silme Günü"
+            name={"productAutoRemoveDay"}
+            tooltip={{
+              title:
+                "Belirtilen gün sayısından sonra bayinin ilanları otomatik olarak kaldırılır.",
+              icon: <InfoCircleOutlined />,
+            }}
+            rules={[
+              {
+                required: true,
+                message: "Bu alan zorunludur.",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item>
-          <Button htmlType="submit" type="primary">
-            Kaydet
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+          <Form.Item
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button htmlType="submit" type="primary">
+              Kaydet
+            </Button>
+          </Form.Item>
+        </Form>
+      </Flex>
+    </Spin>
   );
 }

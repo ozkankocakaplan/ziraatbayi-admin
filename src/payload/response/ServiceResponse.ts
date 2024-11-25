@@ -1,7 +1,7 @@
 export default interface ServiceResponse<T> {
   hasExceptionError: boolean;
   isSuccessful: boolean;
-  exceptionMessage: string;
+  exceptionMessage: object;
   count: number;
   entity: T;
   list: T[];

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   DashboardOutlined,
+  InboxOutlined,
   LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  OrderedListOutlined,
   SettingFilled,
   UploadOutlined,
   UserOutlined,
@@ -26,7 +28,24 @@ const AppLayout: React.FC = () => {
   if (!isAuth && !isLoading) {
     return <Navigate to="/" />;
   }
-
+  const setDefaultSelectedKeys = () => {
+    if (location.pathname === "/admin") {
+      return "/admin";
+    }
+    if (location.pathname === "/admin/categories/add") {
+      return "/admin/categories";
+    }
+    if (location.pathname.includes("/admin/categories/edit")) {
+      return "/admin/categories";
+    }
+    if (location.pathname === "/admin/products/add") {
+      return "/admin/products";
+    }
+    if (location.pathname.includes("/admin/products/edit")) {
+      return "/admin/products";
+    }
+    return location.pathname;
+  };
   return (
     <Layout
       style={{
@@ -39,9 +58,7 @@ const AppLayout: React.FC = () => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={[
-            location.pathname === "/admin" ? "/admin" : location.pathname,
-          ]}
+          defaultSelectedKeys={[setDefaultSelectedKeys()]}
           onClick={(e) => {
             if (e.key === "logout") {
               logout();
@@ -62,13 +79,13 @@ const AppLayout: React.FC = () => {
             },
             {
               key: "/admin/categories",
-              icon: <UploadOutlined />,
+              icon: <OrderedListOutlined />,
               label: "Kategoriler",
             },
             {
-              key: "/admin/ads",
-              icon: <UploadOutlined />,
-              label: "İlanlar",
+              key: "/admin/products",
+              icon: <InboxOutlined />,
+              label: "Ürünler",
             },
             {
               key: "/admin/settings",

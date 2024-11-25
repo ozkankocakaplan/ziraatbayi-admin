@@ -1,45 +1,40 @@
 import React, { useMemo, useState } from "react";
 import type { NotificationArgsProps, TableColumnsType, TableProps } from "antd";
-import { Button, notification, Space, Table, Tag } from "antd";
-import { CopyOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Flex,
+  notification,
+  Popconfirm,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
+import { CopyOutlined, DeleteFilled, EyeFilled } from "@ant-design/icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getDealers, updateDealerStatus } from "../../services/dealerService";
+import DealerResponse from "../../payload/response/DealerResponse";
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
 
 type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 
-interface DataType {
-  key: string;
-  fullName: string;
-  companyName: string;
-  email: string;
-  phone: string;
-  glnNumber: string;
-  taxNumber: string;
-  taxOffice: string;
-  address: string;
-}
-
-const data: DataType[] = [
-  {
-    key: "1",
-    fullName: "Özkan Kocakaplan",
-    companyName: "KOCAKAPLAN",
-    email: "example@gmail.com",
-    phone: "123456",
-    glnNumber: "123456",
-    taxNumber: "123456",
-    taxOffice: "Antalya",
-    address: "Konyaaltı",
-  },
-];
-type NotificationPlacement = NotificationArgsProps["placement"];
-
-const Context = React.createContext({ name: "Default" });
-
+interface DataType extends DealerResponse {}
+const { Title } = Typography;
 const Dealer: React.FC = () => {
+  const queryClient = useQueryClient();
   const [api, contextHolder] = notification.useNotification();
+  const {
+    data: dealers,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["dealers"],
+    queryFn: getDealers,
+  });
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
@@ -48,14 +43,36 @@ const Dealer: React.FC = () => {
     setFilteredInfo(filters);
     setSortedInfo(sorter as Sorts);
   };
-
+  const { mutate } = useMutation({
+    mutationFn: (id: number) => updateDealerStatus(id),
+    onSuccess: (res) => {
+      api.success({
+        message: "Başarılı",
+        description: `Bayi durumu güncellendi`,
+        placement: "topRight",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dealers"],
+      });
+    },
+    onError(error, variables, context) {
+      api.error({
+        message: "Hata",
+        description: `Bir hata oluştu`,
+        placement: "topRight",
+      });
+    },
+  });
   const columns: TableColumnsType<DataType> = [
     {
       title: "Ad Soyad",
       dataIndex: "fullName",
       key: "fullName",
-      filters: [{ text: "Özkan", value: "Özkan Kocakaplan" }],
-      filteredValue: filteredInfo.name || null,
+      filters: dealers?.list?.map((dealer) => ({
+        text: dealer.fullName,
+        value: dealer.fullName,
+      })),
+      filteredValue: filteredInfo.fullName || null,
       onFilter: (value, record) => record.fullName.includes(value as string),
       sorter: (a, b) => a.fullName.length - b.fullName.length,
       sortOrder: sortedInfo.columnKey === "fullName" ? sortedInfo.order : null,
@@ -84,9 +101,9 @@ const Dealer: React.FC = () => {
       dataIndex: "glnNumber",
       key: "glnNumber",
       ellipsis: true,
-      render: (glnNumber) => (
-        <Space size="middle">
-          <span>{glnNumber}</span>
+      render: (r, record) => (
+        <Space key={record.id} size="middle">
+          <span>{record.gnlNumber}</span>
           <CopyToClipboard
             onCopy={() => {
               api.info({
@@ -95,12 +112,31 @@ const Dealer: React.FC = () => {
                 placement: "topRight",
               });
             }}
-            text={glnNumber}
+            text={record.gnlNumber}
           >
             <CopyOutlined />
           </CopyToClipboard>
         </Space>
       ),
+    },
+    {
+      title: "Durum",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (text, record) => {
+        return (
+          <Space key={record.id}>
+            <Switch
+              checkedChildren="Aktif"
+              unCheckedChildren="Pasif"
+              onChange={(value) => {
+                mutate(record.id);
+              }}
+              checked={record.isActive}
+            />
+          </Space>
+        );
+      },
     },
     {
       title: "Address",
@@ -110,12 +146,24 @@ const Dealer: React.FC = () => {
     },
 
     {
-      title: "Durum",
+      title: "İşlem",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
-          <Button type="primary" danger>
-            Sil
+        <Space key={record.id} size="middle">
+          <Popconfirm
+            placement="bottomLeft"
+            title="Silmek istediğinize emin misiniz?"
+            description="Bu işlem geri alınamaz ve tüm veriler silinecektir."
+            onConfirm={() => {}}
+            okText="Evet"
+            cancelText="Hayır"
+          >
+            <Button type="primary" danger>
+              <DeleteFilled />
+            </Button>
+          </Popconfirm>
+          <Button type="primary">
+            <EyeFilled />
           </Button>
         </Space>
       ),
@@ -125,12 +173,17 @@ const Dealer: React.FC = () => {
   return (
     <>
       {contextHolder}
+      <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
+        <Title level={2}>Bayiler</Title>
+      </Flex>
       <Table<DataType>
-        loading={false}
+        loading={isLoading || isFetching}
         virtual
         scroll={{ x: 1500, y: 300 }}
         columns={columns}
-        dataSource={data}
+        dataSource={
+          dealers?.list?.map((dealer) => ({ ...dealer, key: dealer.id })) || []
+        }
         onChange={handleChange}
       />
     </>
