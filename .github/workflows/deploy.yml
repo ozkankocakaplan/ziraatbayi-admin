@@ -45,5 +45,5 @@ jobs:
             docker pull ozkankocakaplan/ziraatbayi-admin:latest &&
             docker stop ziraatbayi-admin || true &&
             docker rm ziraatbayi-admin || true &&
-            docker run -d -p 3001:3001 --name ziraatbayi-admin ozkankocakaplan/ziraatbayi-admin:latest
+            docker run -d -p 8000:3001 --name ziraatbayi-admin ozkankocakaplan/ziraatbayi-admin:latest
           '
