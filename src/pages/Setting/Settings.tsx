@@ -20,8 +20,8 @@ import { getSetting, updateSetting } from "../../services/settingService";
 import { useEffect } from "react";
 import SettingRequest from "../../payload/request/SettingRequest";
 type FieldType = {
-  maxProductCount?: string;
-  productAutoRemoveDay?: string;
+  maxAdvertCount?: string;
+  advertAutoRemoveDay?: string;
 };
 const { Title } = Typography;
 export default function Settings() {
@@ -59,8 +59,8 @@ export default function Settings() {
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const data = {
-      maxProductCount: parseInt(values.maxProductCount!),
-      productAutoRemoveDay: parseInt(values.productAutoRemoveDay!),
+      maxAdvertCount: parseInt(values.maxAdvertCount!),
+      advertAutoRemoveDay: parseInt(values.advertAutoRemoveDay!),
     } as SettingRequest;
     mutate(data);
   };
@@ -85,7 +85,7 @@ export default function Settings() {
         >
           <Form.Item
             label="Maksimum İlan Sayısı"
-            name={"maxProductCount"}
+            name={"maxAdvertCount"}
             tooltip={{
               title:
                 "Bayinin aynı anda bulunabilecek maksimum ilan sayısını belirler.",
@@ -102,7 +102,7 @@ export default function Settings() {
           </Form.Item>
           <Form.Item
             label="Otomatik İlan Silme Günü"
-            name={"productAutoRemoveDay"}
+            name={"advertAutoRemoveDay"}
             tooltip={{
               title:
                 "Belirtilen gün sayısından sonra bayinin ilanları otomatik olarak kaldırılır.",

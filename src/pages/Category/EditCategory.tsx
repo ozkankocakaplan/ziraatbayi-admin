@@ -1,22 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  Flex,
-  Form,
-  FormProps,
-  Input,
-  notification,
-  TreeSelect,
-} from "antd";
-import { useEffect, useState } from "react";
-import {
-  getCategories,
-  getCategory,
-  updateCategory,
-} from "../../services/categoryService";
+import { Button, Flex, Form, FormProps, Input, notification } from "antd";
+import { getCategory, updateCategory } from "../../services/categoryService";
 import { useParams } from "react-router-dom";
-import CategoryResponse from "../../payload/response/CategoryResponse";
-import { rootCategory } from "../../helper/helper";
+
 import TextArea from "antd/es/input/TextArea";
 
 import { Typography } from "antd";

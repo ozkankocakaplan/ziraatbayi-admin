@@ -6,7 +6,7 @@ export const getDealers = async (): Promise<
   ServiceResponse<DealerResponse>
 > => {
   const response = await apiClient.get<ServiceResponse<DealerResponse>>(
-    "/dealer/dealers"
+    "/api/dealer/dealers"
   );
   return response.data;
 };
@@ -14,7 +14,15 @@ export const updateDealerStatus = async (
   id: number
 ): Promise<ServiceResponse<DealerResponse>> => {
   const response = await apiClient.put<ServiceResponse<DealerResponse>>(
-    `/dealer/update-dealer-active-status/${id}`
+    `/api/dealer/update-dealer-active-status/${id}`
+  );
+  return response.data;
+};
+export const dealerApproval = async (
+  id: number
+): Promise<ServiceResponse<DealerResponse>> => {
+  const response = await apiClient.put<ServiceResponse<DealerResponse>>(
+    `/api/dealer/dealer-approval/${id}`
   );
   return response.data;
 };

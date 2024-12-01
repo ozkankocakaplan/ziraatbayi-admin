@@ -6,7 +6,7 @@ export const createProduct = async (
   data: FormData
 ): Promise<ServiceResponse<ProductResponse>> => {
   const response = await apiClient.post<ServiceResponse<ProductResponse>>(
-    "/product/create-product",
+    "/api/product/create-product",
     data,
     {
       headers: {
@@ -20,7 +20,21 @@ export const getProducts = async (): Promise<
   ServiceResponse<ProductResponse>
 > => {
   const response = await apiClient.get<ServiceResponse<ProductResponse>>(
-    "/product/products"
+    "/api/product/products"
   );
+  return response.data;
+};
+export const getProduct = async (
+  id: number
+): Promise<ServiceResponse<ProductResponse>> => {
+  const response = await apiClient.get<ServiceResponse<ProductResponse>>(
+    `/api/product/${id}`
+  );
+  return response.data;
+};
+export const getProductImage = async (imageName: string): Promise<Blob> => {
+  const response = await apiClient.get(`${imageName}`, {
+    responseType: "blob",
+  });
   return response.data;
 };

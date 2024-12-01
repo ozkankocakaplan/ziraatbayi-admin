@@ -7,7 +7,7 @@ export const getSetting = async (): Promise<
   ServiceResponse<SettingResponse>
 > => {
   const response = await apiClient.get<ServiceResponse<SettingResponse>>(
-    "/setting"
+    "/api/setting"
   );
   return response.data;
 };
@@ -15,7 +15,7 @@ export const updateSetting = async (
   data: SettingRequest
 ): Promise<ServiceResponse<SettingResponse>> => {
   const response = await apiClient.put<ServiceResponse<SettingResponse>>(
-    "/setting",
+    "/api/setting",
     data
   );
   return response.data;

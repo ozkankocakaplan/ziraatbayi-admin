@@ -1,5 +1,6 @@
 interface DealerResponse {
   id: number;
+  dealerId: number;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -10,6 +11,7 @@ interface DealerResponse {
   taxNumber: string;
   taxOffice: string;
   isActive: boolean;
+  isApproved: boolean;
   address: string;
 }
 export default DealerResponse;

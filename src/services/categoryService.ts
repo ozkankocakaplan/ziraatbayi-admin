@@ -9,7 +9,7 @@ export const getCategories = async (): Promise<
   ServiceResponse<RootCategoryResponse>
 > => {
   const response = await apiClient.get<ServiceResponse<RootCategoryResponse>>(
-    "/category/categories"
+    "/api/category/categories"
   );
   return response.data;
 };
@@ -17,7 +17,7 @@ export const getCategory = async (
   id: number
 ): Promise<ServiceResponse<CategoryResponse>> => {
   const response = await apiClient.get<ServiceResponse<CategoryResponse>>(
-    `/category/${id}`
+    `/api/category/${id}`
   );
   return response.data;
 };
@@ -25,7 +25,7 @@ export const updateCategory = async (
   data: UpdateCategoryRequest
 ): Promise<ServiceResponse<CategoryResponse>> => {
   const response = await apiClient.put<ServiceResponse<CategoryResponse>>(
-    `/category/update-category`,
+    `/api/category/update-category`,
     data
   );
   return response.data;
@@ -34,7 +34,7 @@ export const addCategory = async (
   data: CreateCategoryRequest
 ): Promise<ServiceResponse<CategoryResponse>> => {
   const response = await apiClient.post<ServiceResponse<CategoryResponse>>(
-    `/category/create-category`,
+    `/api/category/create-category`,
     data
   );
   return response.data;
@@ -43,7 +43,7 @@ export const updateCategoryStatus = async (
   id: number
 ): Promise<ServiceResponse<CategoryResponse>> => {
   const response = await apiClient.put<ServiceResponse<CategoryResponse>>(
-    `/category/update-active-status/${id}`
+    `/api/category/update-active-status/${id}`
   );
   return response.data;
 };

@@ -8,11 +8,9 @@ import {
   Button,
   Flex,
   notification,
-  Popconfirm,
   Space,
   Switch,
   Table,
-  TableColumnsType,
   Typography,
 } from "antd";
 import RootCategoryResponse from "../../payload/response/RootCategoryResponse";

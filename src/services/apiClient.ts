@@ -2,7 +2,10 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:8080"
+      : process.env.REACT_APP_API_URL,
   timeout: 10000,
 });
 

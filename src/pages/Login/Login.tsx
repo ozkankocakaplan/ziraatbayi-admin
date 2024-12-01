@@ -1,6 +1,6 @@
 import React from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Flex, Form, Input } from "antd";
+import { Button, Checkbox, Flex, Form, Input, notification } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../services/authService";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ type FieldType = {
 const App: React.FC = () => {
   const { login: setLogin, isLoading, isAuth } = useAuth();
   const navigate = useNavigate();
-
+  const [api, contextHolder] = notification.useNotification();
   const mutation = useMutation<
     ServiceResponse<LoginResponse>,
     Error,
@@ -27,11 +27,13 @@ const App: React.FC = () => {
     mutationFn: login,
     onSuccess: (data) => {
       setLogin(data.entity.token);
-      console.log("Giriş başarılı:", data);
       navigate("/admin");
     },
     onError: (error) => {
-      console.error("Giriş hatası:", error.message);
+      api.error({
+        message: "Hata",
+        description: "E-posta veya şifre hatalı",
+      });
     },
   });
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
@@ -48,6 +50,7 @@ const App: React.FC = () => {
   }
   return (
     <Flex align="center" justify="center" style={{ height: "100vh" }}>
+      {contextHolder}
       <Form
         layout="vertical"
         name="basic"

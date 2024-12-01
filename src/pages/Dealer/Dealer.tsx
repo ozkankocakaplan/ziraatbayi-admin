@@ -14,7 +14,11 @@ import {
 import { CopyOutlined, DeleteFilled, EyeFilled } from "@ant-design/icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getDealers, updateDealerStatus } from "../../services/dealerService";
+import {
+  dealerApproval,
+  getDealers,
+  updateDealerStatus,
+} from "../../services/dealerService";
 import DealerResponse from "../../payload/response/DealerResponse";
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -49,6 +53,26 @@ const Dealer: React.FC = () => {
       api.success({
         message: "Başarılı",
         description: `Bayi durumu güncellendi`,
+        placement: "topRight",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dealers"],
+      });
+    },
+    onError(error, variables, context) {
+      api.error({
+        message: "Hata",
+        description: `Bir hata oluştu`,
+        placement: "topRight",
+      });
+    },
+  });
+  const handleDealerApproval = useMutation({
+    mutationFn: (id: number) => dealerApproval(id),
+    onSuccess: (res) => {
+      api.success({
+        message: "Başarılı",
+        description: `Bayi onaylandı`,
         placement: "topRight",
       });
       queryClient.invalidateQueries({
@@ -120,17 +144,40 @@ const Dealer: React.FC = () => {
       ),
     },
     {
-      title: "Durum",
-      dataIndex: "isActive",
-      key: "isActive",
+      title: "Onay Durum",
+      dataIndex: "isApproved",
+      key: "isApproved",
       render: (text, record) => {
         return (
-          <Space key={record.id}>
+          <Space key={record.dealerId}>
             <Switch
               checkedChildren="Aktif"
               unCheckedChildren="Pasif"
               onChange={(value) => {
-                mutate(record.id);
+                handleDealerApproval.mutate(record.dealerId);
+              }}
+              checked={record.isApproved}
+            />
+          </Space>
+        );
+      },
+    },
+    {
+      title: "Aktiflik Durum",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (text, record) => {
+        return (
+          <Space key={record.dealerId}>
+            <Switch
+              checkedChildren="Aktif"
+              unCheckedChildren="Pasif"
+              onChange={(value) => {
+                if (!record.isApproved) {
+                  handleDealerApproval.mutate(record.dealerId);
+                } else {
+                  mutate(record.dealerId);
+                }
               }}
               checked={record.isActive}
             />

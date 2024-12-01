@@ -63,7 +63,7 @@ export default function Products() {
               <Button
                 type="primary"
                 onClick={() => {
-                  navigate(`/admin/products/${record.id}`);
+                  navigate(`/admin/products/edit/${record.id}`);
                 }}
               >
                 <EditFilled />

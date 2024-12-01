@@ -1,5 +1,5 @@
 interface SettingResponse {
-  maxProductCount: number;
-  productAutoRemoveDay: number;
+  maxAdvertCount: number;
+  advertAutoRemoveDay: number;
 }
 export default SettingResponse;

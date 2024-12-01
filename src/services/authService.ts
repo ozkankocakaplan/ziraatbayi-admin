@@ -7,7 +7,7 @@ export const login = async (
   data: LoginRequest
 ): Promise<ServiceResponse<LoginResponse>> => {
   const response = await apiClient.post<ServiceResponse<LoginResponse>>(
-    "/auth/login",
+    "/api/auth/loginForWeb",
     data
   );
   return response.data;

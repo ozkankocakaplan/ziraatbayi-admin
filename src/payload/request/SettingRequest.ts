@@ -1,5 +1,5 @@
 interface SettingRequest {
-  maxProductCount: number;
-  productAutoRemoveDay: number;
+  maxAdvertCount: number;
+  advertAutoRemoveDay: number;
 }
 export default SettingRequest;
