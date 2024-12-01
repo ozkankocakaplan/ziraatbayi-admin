@@ -2,7 +2,7 @@ import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppLayout from "../components/Layout/Layout";
 import Home from "../pages/Home/Home";
-import Login from "../pages/Login/Login";
+import Login from "../pages/Auth/Login";
 import Dealer from "../pages/Dealer/Dealer";
 import Adverts from "../pages/Advert/Adverts";
 import Categories from "../pages/Category/Categories";
@@ -13,12 +13,17 @@ import AddCategory from "../pages/Category/AddCategory";
 import Products from "../pages/Product/Products";
 import AddProduct from "../pages/Product/AddProduct";
 import EditProduct from "../pages/Product/EditProduct";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
       element: <Login />,
+    },
+    {
+      path: "/forgot-password",
+      element: <ForgotPassword />,
     },
     {
       path: "*",

@@ -74,7 +74,9 @@ export default function Categories() {
       });
     },
     onError: (error) => {
-      console.log(error);
+      api.error({
+        message: "Kategori durumu güncellenirken bir hata oluştu",
+      });
     },
   });
 

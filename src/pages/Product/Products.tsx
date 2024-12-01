@@ -1,20 +1,43 @@
-import { useQuery } from "@tanstack/react-query";
-import { Button, Flex, Switch, Table, Typography } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Flex, notification, Switch, Table, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getProducts } from "../../services/productService";
+import {
+  getProducts,
+  updateProductStatus,
+} from "../../services/productService";
 import ProductResponse from "../../payload/response/ProductResponse";
 import { EditFilled } from "@ant-design/icons";
+import ProductImage from "../../components/ProductImage/ProductImage";
 const { Title } = Typography;
 export default function Products() {
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
+  const [api, contextHolder] = notification.useNotification();
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
   });
 
+  const handleChangeProductStatus = useMutation({
+    mutationFn: updateProductStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+      api.success({
+        message: "Ürün durumu güncellendi",
+      });
+    },
+    onError: (error) => {
+      api.error({
+        message: "Ürün durumu güncellenirken bir hata oluştu",
+      });
+    },
+  });
+
   return (
     <>
+      {contextHolder}
       <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
         <Title level={2}>Ürünler</Title>
         <Button
@@ -30,6 +53,19 @@ export default function Products() {
         dataSource={data?.list.map((item) => ({ ...item, key: item.id }))}
         loading={isLoading || isFetching}
         columns={[
+          {
+            title: "Resim",
+            dataIndex: "images",
+            key: "images",
+            render: (_, record) => {
+              return (
+                <ProductImage
+                  imageUrl={record?.images?.[0]?.imageUrl || "error"}
+                  productName={record.name}
+                />
+              );
+            },
+          },
           {
             title: "Ürün Adı",
             dataIndex: "name",
@@ -50,7 +86,10 @@ export default function Products() {
                 <Switch
                   checkedChildren="Aktif"
                   unCheckedChildren="Pasif"
-                  onChange={(value) => {}}
+                  loading={handleChangeProductStatus.isPending}
+                  onChange={(value) => {
+                    handleChangeProductStatus.mutate(record.id);
+                  }}
                   checked={record.isActive}
                 />
               );

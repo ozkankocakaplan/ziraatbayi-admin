@@ -1,3 +1,5 @@
+import UpdateProductRequest from "../payload/request/UpdateProductRequest";
+import ProductImageResponse from "../payload/response/ProductImageResponse";
 import ProductResponse from "../payload/response/ProductResponse";
 import ServiceResponse from "../payload/response/ServiceResponse";
 import apiClient from "./apiClient";
@@ -36,5 +38,49 @@ export const getProductImage = async (imageName: string): Promise<Blob> => {
   const response = await apiClient.get(`${imageName}`, {
     responseType: "blob",
   });
+  return response.data;
+};
+export const addProductImage = async (
+  data: FormData
+): Promise<ServiceResponse<ProductImageResponse>> => {
+  const response = await apiClient.post<ServiceResponse<ProductImageResponse>>(
+    `/api/product/add-product-image/${data.get("productId")}`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+export const deleteProductImage = async (
+  imageId: number
+): Promise<ServiceResponse<ProductImageResponse>> => {
+  const response = await apiClient.delete<
+    ServiceResponse<ProductImageResponse>
+  >(`/api/product/delete-product-image/${imageId}`);
+  return response.data;
+};
+export const updateProductStatus = async (
+  id: number
+): Promise<ServiceResponse<ProductResponse>> => {
+  const response = await apiClient.put<ServiceResponse<ProductResponse>>(
+    `/api/product/update-product-status/${id}`
+  );
+  return response.data;
+};
+export const updateProduct = async (
+  data: UpdateProductRequest
+): Promise<ServiceResponse<ProductResponse>> => {
+  const response = await apiClient.put<ServiceResponse<ProductResponse>>(
+    `/api/product/update-product`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 };

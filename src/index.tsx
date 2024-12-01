@@ -15,7 +15,11 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ConfigProvider theme={{ token: { colorPrimary: "#00b96b" } }}>
+        <ConfigProvider
+          theme={{
+            token: { colorPrimary: "#45AE4D" },
+          }}
+        >
           <Router />
         </ConfigProvider>
       </AuthProvider>
