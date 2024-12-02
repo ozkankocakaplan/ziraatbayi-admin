@@ -1,5 +1,5 @@
 import Icon from "@ant-design/icons";
-import { Card, Flex, Skeleton, Typography } from "antd";
+import { Card, Col, Flex, Row, Skeleton, Typography } from "antd";
 import users from "../../assets/image/dealers";
 import products from "../../assets/image/products";
 import adverts from "../../assets/image/adverts";
@@ -67,26 +67,32 @@ export default function Home() {
 
   return (
     <>
-      <Flex gap="middle" align="start">
-        <QuickStats
-          loading={isPending || isFetching}
-          title="Toplam Bayi"
-          value={data?.entity?.totalDealerCount?.toString() || "0"}
-          icon={users}
-        />
-        <QuickStats
-          loading={isPending || isFetching}
-          title="Toplam Ürün"
-          value={data?.entity?.totalProductCount?.toString() || "0"}
-          icon={products}
-        />
-        <QuickStats
-          loading={isPending || isFetching}
-          title="Toplam İlan"
-          value={data?.entity?.totalActiveAdvertCount?.toString() || "0"}
-          icon={adverts}
-        />
-      </Flex>
+      <Row wrap gutter={[16, 16]} justify="start">
+        <Col xs={24} sm={12} md={8}>
+          <QuickStats
+            loading={isPending || isFetching}
+            title="Toplam Bayi"
+            value={data?.entity?.totalDealerCount?.toString() || "0"}
+            icon={users}
+          />
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <QuickStats
+            loading={isPending || isFetching}
+            title="Toplam Ürün"
+            value={data?.entity?.totalProductCount?.toString() || "0"}
+            icon={products}
+          />
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <QuickStats
+            loading={isPending || isFetching}
+            title="Toplam İlan"
+            value={data?.entity?.totalActiveAdvertCount?.toString() || "0"}
+            icon={adverts}
+          />
+        </Col>
+      </Row>
     </>
   );
 }

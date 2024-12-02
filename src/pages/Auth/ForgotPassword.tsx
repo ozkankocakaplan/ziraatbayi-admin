@@ -2,10 +2,12 @@ import React from "react";
 import type { FormProps } from "antd";
 import {
   Button,
+  Col,
   Flex,
   Form,
   Input,
   notification,
+  Row,
   Space,
   Typography,
 } from "antd";
@@ -33,71 +35,89 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <Flex
-      align="center"
-      justify="center"
-      style={{ height: "100vh", background: "#f9f9f9" }}
+      style={{
+        height: "100vh",
+        background: "#f9f9f9",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       {contextHolder}
-      <Flex
+      <Row
+        gutter={[16, 16]}
         style={{
+          margin: 20,
           background: "#fff",
           padding: 20,
-          height: 450,
-          gap: 30,
-          maxWidth: 900,
           borderRadius: 10,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          maxWidth: 900,
+          minHeight: 450,
           boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          alignItems: "center",
         }}
       >
-        <Logo />
-
-        <Form
-          layout="vertical"
-          name="basic"
+        <Col
+          xs={24}
+          sm={24}
+          md={12}
           style={{
-            width: 430,
-            justifyContent: "space-between",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
         >
-          <Flex justify="center" style={{ marginBottom: 30 }}>
-            <Title style={{ color: "#45AE4D" }} level={1}>
-              Şifremi Unuttum
-            </Title>
-          </Flex>
-          <Form.Item<FieldType>
-            label="E-mail"
-            name="email"
-            rules={[
-              { required: true, message: "Lütfen e-mail adresinizi girin!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+          <Logo />
+        </Col>
 
-          <Form.Item label={null}>
-            <Flex justify="space-between" align="center">
-              <Button
-                style={{ padding: "0px" }}
-                type="link"
-                onClick={() => {
-                  navigate("/");
-                }}
-              >
-                Giriş Yap
-              </Button>
-              <Button type="primary" htmlType="submit">
-                Gönder
-              </Button>
+        <Col xs={24} sm={24} md={12}>
+          <Form
+            layout="vertical"
+            name="basic"
+            style={{ maxWidth: "100%" }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+          >
+            <Flex justify="center" style={{ marginBottom: 30 }}>
+              <Title style={{ color: "#45AE4D" }} level={1}>
+                Şifremi Unuttum
+              </Title>
             </Flex>
-          </Form.Item>
-        </Form>
-      </Flex>
+
+            <Form.Item<FieldType>
+              label="E-mail"
+              name="email"
+              rules={[
+                { required: true, message: "Lütfen e-mail adresinizi girin!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label={null}>
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Button
+                    style={{ padding: "0px" }}
+                    type="link"
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
+                    Giriş Yap
+                  </Button>
+                </Col>
+                <Col>
+                  <Button type="primary" htmlType="submit">
+                    Gönder
+                  </Button>
+                </Col>
+              </Row>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
     </Flex>
   );
 };
