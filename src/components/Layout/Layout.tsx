@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  BranchesOutlined,
   DashboardOutlined,
   InboxOutlined,
   LoginOutlined,
@@ -43,6 +44,15 @@ const AppLayout: React.FC = () => {
     }
     if (location.pathname.includes("/admin/products/edit")) {
       return "/admin/products";
+    }
+    if (location.pathname.includes("/admin/dealer/")) {
+      return "/admin/dealers";
+    }
+    if (location.pathname.includes("/admin/manufacturer/")) {
+      return "/admin/manufacturers";
+    }
+    if (location.pathname.includes("/admin/manufacturers/edit")) {
+      return "/admin/manufacturers";
     }
     return location.pathname;
   };
@@ -88,6 +98,11 @@ const AppLayout: React.FC = () => {
               label: "Ürünler",
             },
             {
+              key: "/admin/manufacturers",
+              icon: <BranchesOutlined />,
+              label: "Üreticiler",
+            },
+            {
               key: "/admin/settings",
               icon: <SettingFilled />,
               label: "Ayarlar",
@@ -115,11 +130,15 @@ const AppLayout: React.FC = () => {
         </Header>
         <Content
           style={{
-            margin: "24px 16px",
             padding: 24,
             minHeight: 280,
-            background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            ...(location.pathname.includes("/admin/dealer/")
+              ? {}
+              : {
+                  margin: "24px 16px",
+                  background: colorBgContainer,
+                }),
           }}
         >
           <Outlet />

@@ -20,6 +20,7 @@ import {
   updateDealerStatus,
 } from "../../services/dealerService";
 import DealerResponse from "../../payload/response/DealerResponse";
+import { useNavigate } from "react-router-dom";
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
 
@@ -29,6 +30,7 @@ type Sorts = GetSingle<Parameters<OnChange>[2]>;
 interface DataType extends DealerResponse {}
 const { Title } = Typography;
 const Dealer: React.FC = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [api, contextHolder] = notification.useNotification();
   const {
@@ -209,7 +211,12 @@ const Dealer: React.FC = () => {
               <DeleteFilled />
             </Button>
           </Popconfirm>
-          <Button type="primary">
+          <Button
+            onClick={() => {
+              navigate(`/admin/dealer/${record.dealerId}`);
+            }}
+            type="primary"
+          >
             <EyeFilled />
           </Button>
         </Space>

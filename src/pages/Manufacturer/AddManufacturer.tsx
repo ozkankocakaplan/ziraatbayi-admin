@@ -1,36 +1,31 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Flex, Form, FormProps, Input, notification } from "antd";
-import { useEffect } from "react";
-import { addCategory, getCategories } from "../../services/categoryService";
+
 import CategoryResponse from "../../payload/response/CategoryResponse";
 import { getErrorMessage } from "../../helper/helper";
-import TextArea from "antd/es/input/TextArea";
 
 import { Typography } from "antd";
-import CreateCategoryRequest from "../../payload/request/CreateCategoryRequest";
 import { AxiosError } from "axios";
 import ServiceResponse from "../../payload/response/ServiceResponse";
-import SelectCategory from "../../components/SelectCategory/SelectCategory";
+import { createManufacturer } from "../../services/manufacturerService";
+import CreateManufacturerRequest from "../../payload/request/CreateManufacturerRequest";
 
 const { Title } = Typography;
-type FieldType = {};
-export default function AddCategory() {
+
+export default function AddManufacturer() {
   const [api, contextHolder] = notification.useNotification();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
-  const { data: categories, isLoading } = useQuery({
-    queryFn: getCategories,
-    queryKey: ["categories"],
-  });
+
   const mutation = useMutation({
-    mutationFn: addCategory,
+    mutationFn: createManufacturer,
     onSuccess: () => {
       api.success({
         message: "Başarılı",
-        description: "Kategori başarıyla eklendi.",
+        description: "Üretici firma başarıyla eklendi.",
       });
       queryClient.invalidateQueries({
-        queryKey: ["categories"],
+        queryKey: ["manufacturers"],
       });
       form.resetFields();
     },
@@ -45,19 +40,17 @@ export default function AddCategory() {
     },
   });
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    mutation.mutate(values as CreateCategoryRequest);
+  const onFinish: FormProps<CreateManufacturerRequest>["onFinish"] = (
+    values
+  ) => {
+    mutation.mutate(values);
   };
-  useEffect(() => {
-    if (categories) {
-      form.setFieldValue("parentCategoryId", 0);
-    }
-  }, [categories]);
+
   return (
     <>
       {contextHolder}
       <Flex vertical align="center" gap={30}>
-        <Title level={2}>Kategori Ekle</Title>
+        <Title level={2}>Üretici Firma Ekle</Title>
         <Form
           layout={"vertical"}
           form={form}
@@ -67,23 +60,7 @@ export default function AddCategory() {
           labelCol={{ span: 21 }}
         >
           <Form.Item
-            label="Kategori"
-            name={"parentCategoryId"}
-            rules={[
-              {
-                required: true,
-                message: "Bu alan zorunludur.",
-              },
-            ]}
-          >
-            <SelectCategory
-              onChange={(value) =>
-                form.setFieldsValue({ parentCategoryId: value })
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            label="Kategori Adı"
+            label="Üretici Firma Adı"
             name={"name"}
             rules={[
               {
@@ -94,14 +71,7 @@ export default function AddCategory() {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Açıklama" name={"description"}>
-            <TextArea
-              autoSize={{
-                minRows: 3,
-                maxRows: 6,
-              }}
-            />
-          </Form.Item>
+
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit">
               Kaydet

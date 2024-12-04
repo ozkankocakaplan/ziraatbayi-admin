@@ -14,6 +14,10 @@ import Products from "../pages/Product/Products";
 import AddProduct from "../pages/Product/AddProduct";
 import EditProduct from "../pages/Product/EditProduct";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
+import Detail from "../pages/Dealer/DealerDetail";
+import Manufacturers from "../pages/Manufacturer/Manufacturers";
+import AddManufacturer from "../pages/Manufacturer/AddManufacturer";
+import EditManufacturer from "../pages/Manufacturer/EditManufacturer";
 
 const router = createBrowserRouter(
   [
@@ -42,6 +46,10 @@ const router = createBrowserRouter(
           element: <Dealer />,
         },
         {
+          path: "dealer/:id",
+          element: <Detail />,
+        },
+        {
           path: "products",
           element: <Products />,
         },
@@ -64,6 +72,18 @@ const router = createBrowserRouter(
         {
           path: "categories/edit/:id",
           element: <EditCategory />,
+        },
+        {
+          path: "manufacturers",
+          element: <Manufacturers />,
+        },
+        {
+          path: "manufacturers/add",
+          element: <AddManufacturer />,
+        },
+        {
+          path: "manufacturers/edit/:id",
+          element: <EditManufacturer />,
         },
         {
           path: "settings",
