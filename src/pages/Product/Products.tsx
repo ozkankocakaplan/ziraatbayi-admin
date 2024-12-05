@@ -52,6 +52,8 @@ export default function Products() {
       <Table<ProductResponse>
         dataSource={data?.list.map((item) => ({ ...item, key: item.id }))}
         loading={isLoading || isFetching}
+        virtual
+        scroll={{ x: 1500 }}
         columns={[
           {
             title: "Resim",
@@ -71,6 +73,18 @@ export default function Products() {
             dataIndex: "name",
             key: "name",
             render: (name) => <span>{name}</span>,
+          },
+          {
+            title: "Etken Madde",
+            dataIndex: "activeSubstance",
+            key: "activeSubstance",
+            render: (_, record) => <span>{record.activeSubstance}</span>,
+          },
+          {
+            title: "Üretici Firma",
+            dataIndex: "manufacturerName",
+            key: "manufacturerName",
+            render: (_, record) => <span>{record.manufacturer.name}</span>,
           },
           {
             title: "Kategori Adı",

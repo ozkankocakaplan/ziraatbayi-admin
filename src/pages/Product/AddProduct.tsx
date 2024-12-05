@@ -8,6 +8,7 @@ import CreateProductRequest from "../../payload/request/CreateProductRequest";
 import { PlusOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { createProduct } from "../../services/productService";
+import SelectManufacturer from "../../components/SelectManufacturer/SelectManufacturer";
 const { Title } = Typography;
 
 export default function AddProduct() {
@@ -52,6 +53,8 @@ export default function AddProduct() {
     formData.append("name", values.name);
     formData.append("description", values.description);
     formData.append("categoryId", values.categoryId.toString());
+    formData.append("manufacturerId", values.manufacturerId.toString());
+    formData.append("activeSubstance", values.activeSubstance);
     mutate(formData);
   };
   return (
@@ -126,6 +129,23 @@ export default function AddProduct() {
             />
           </Form.Item>
           <Form.Item
+            style={{ marginTop: 20 }}
+            label="Üretici Firma"
+            name={"manufacturerId"}
+            rules={[
+              {
+                required: true,
+                message: "Bu alan zorunludur.",
+              },
+            ]}
+          >
+            <SelectManufacturer
+              onChange={(value) =>
+                form.setFieldsValue({ manufacturerId: value })
+              }
+            />
+          </Form.Item>
+          <Form.Item
             label="Ürün Adı"
             name={"name"}
             rules={[
@@ -135,7 +155,19 @@ export default function AddProduct() {
               },
             ]}
           >
-            <Input />
+            <Input placeholder="Ürün adını giriniz." />
+          </Form.Item>
+          <Form.Item
+            label="Etken Madde"
+            name={"activeSubstance"}
+            rules={[
+              {
+                required: true,
+                message: "Bu alan zorunludur.",
+              },
+            ]}
+          >
+            <Input placeholder="Etken maddeyi giriniz." />
           </Form.Item>
           <Form.Item label="Açıklama" name={"description"}>
             <TextArea

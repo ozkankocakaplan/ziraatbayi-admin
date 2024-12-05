@@ -29,6 +29,7 @@ import {
 import { useParams } from "react-router-dom";
 import UpdateProductRequest from "../../payload/request/UpdateProductRequest";
 import { onError } from "../../helper/helper";
+import SelectManufacturer from "../../components/SelectManufacturer/SelectManufacturer";
 const { Title } = Typography;
 
 export default function EditProduct() {
@@ -280,6 +281,23 @@ export default function EditProduct() {
               />
             </Form.Item>
             <Form.Item
+              style={{ marginTop: 20 }}
+              label="Üretici Firma"
+              name={"manufacturerId"}
+              rules={[
+                {
+                  required: true,
+                  message: "Bu alan zorunludur.",
+                },
+              ]}
+            >
+              <SelectManufacturer
+                onChange={(value) =>
+                  form.setFieldsValue({ manufacturerId: value })
+                }
+              />
+            </Form.Item>
+            <Form.Item
               label="Ürün Adı"
               name={"name"}
               rules={[
@@ -289,7 +307,19 @@ export default function EditProduct() {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="Ürün adını giriniz." />
+            </Form.Item>
+            <Form.Item
+              label="Etken Madde"
+              name={"activeSubstance"}
+              rules={[
+                {
+                  required: true,
+                  message: "Bu alan zorunludur.",
+                },
+              ]}
+            >
+              <Input placeholder="Etken maddeyi giriniz." />
             </Form.Item>
             <Form.Item label="Açıklama" name={"description"}>
               <TextArea
