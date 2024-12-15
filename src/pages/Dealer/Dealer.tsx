@@ -21,6 +21,7 @@ import {
 } from "../../services/dealerService";
 import DealerResponse from "../../payload/response/DealerResponse";
 import { useNavigate } from "react-router-dom";
+import { onError } from "../../helper/helper";
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
 
@@ -81,12 +82,8 @@ const Dealer: React.FC = () => {
         queryKey: ["dealers"],
       });
     },
-    onError(error, variables, context) {
-      api.error({
-        message: "Hata",
-        description: `Bir hata oluştu`,
-        placement: "topRight",
-      });
+    onError(er: any) {
+      onError(er, api);
     },
   });
   const columns: TableColumnsType<DataType> = [

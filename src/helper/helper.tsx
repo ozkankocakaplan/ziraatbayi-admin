@@ -15,10 +15,13 @@ export const onError = <T,>(
   error: AxiosError<ServiceResponse<T>>,
   api: any
 ) => {
+  let errorMessage = error.response?.data.exceptionMessage;
   api.error({
     message: "Hata",
     description:
-      getErrorMessage(error.response?.data.exceptionMessage as []) ||
-      "Bir hata oluştu.",
+      typeof errorMessage === "string"
+        ? errorMessage
+        : getErrorMessage(error.response?.data.exceptionMessage as []) ||
+          "Bir hata oluştu.",
   });
 };
