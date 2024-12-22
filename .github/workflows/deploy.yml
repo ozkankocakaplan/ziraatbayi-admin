@@ -47,5 +47,5 @@ jobs:
             docker pull ozkankocakaplan/ziraatbayi-admin:latest &&
             docker stop ziraatbayi-admin || true &&
             docker rm ziraatbayi-admin || true &&
-            docker run -d -p 8000:${{ secrets.PORT }} --name ziraatbayi-admin -e REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} ozkankocakaplan/ziraatbayi-admin:latest
+            docker run -d -p 8000:${{ secrets.PORT }} --name ziraatbayi-admin  ozkankocakaplan/ziraatbayi-admin:latest
           '
