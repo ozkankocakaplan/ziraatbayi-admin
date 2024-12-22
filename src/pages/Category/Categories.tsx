@@ -32,7 +32,7 @@ export default function Categories() {
 
   const extraDataSource = () => {
     let datas = [] as CategoryType[];
-    data?.list.map((item, index) => {
+    data?.list?.map?.((item, index) => {
       let object = {
         id: item.id,
         name: item.name,
@@ -110,7 +110,7 @@ export default function Categories() {
               return (
                 <Space>
                   {(!record.children ||
-                    record?.children?.filter((x) => !x.isActive).length >
+                    record?.children?.filter?.((x) => !x.isActive).length >
                       0) && (
                     <Switch
                       loading={isPending}
