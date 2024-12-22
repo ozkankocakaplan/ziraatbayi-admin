@@ -150,6 +150,7 @@ const Dealer: React.FC = () => {
         return (
           <Space key={record.dealerId}>
             <Switch
+              disabled={record.isActive ? true : false}
               checkedChildren="Aktif"
               unCheckedChildren="Pasif"
               onChange={(value) => {
@@ -204,9 +205,9 @@ const Dealer: React.FC = () => {
             okText="Evet"
             cancelText="Hayır"
           >
-            <Button type="primary" danger>
+            {/* <Button type="primary" danger>
               <DeleteFilled />
-            </Button>
+            </Button> */}
           </Popconfirm>
           <Button
             onClick={() => {

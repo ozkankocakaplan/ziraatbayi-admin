@@ -10,5 +10,6 @@ interface AdvertResponse {
   startDate: string;
   expiryDate: string;
   isActive: boolean;
+  createdAt: string;
 }
 export default AdvertResponse;

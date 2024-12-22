@@ -103,9 +103,27 @@ const AppLayout: React.FC = () => {
               label: "Üreticiler",
             },
             {
-              key: "/admin/settings",
+              key: "/settings",
               icon: <SettingFilled />,
               label: "Ayarlar",
+              children: [
+                {
+                  key: "/admin/settings",
+                  label: "Genel Ayarlar",
+                },
+                {
+                  key: "/admin/profile",
+                  label: "Profil",
+                },
+                {
+                  key: "/admin/change-password",
+                  label: "Şifre Değiştir",
+                },
+                {
+                  key: "/admin/plans/edit",
+                  label: "Plan Düzenle",
+                },
+              ],
             },
             {
               key: "logout",

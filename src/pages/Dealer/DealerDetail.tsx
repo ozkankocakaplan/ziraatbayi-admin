@@ -11,36 +11,109 @@ import {
   Image,
   Space,
   Spin,
+  notification,
+  Popconfirm,
 } from "antd";
-import { EditFilled } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import { getDealerById } from "../../services/dealerService";
+import { EditFilled, SubnodeOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getDealerById,
+  getDealerDetailSummary,
+  updateDealer,
+} from "../../services/dealerService";
 import { useNavigate, useParams } from "react-router-dom";
-import { render } from "@testing-library/react";
+
 import dayjs from "dayjs";
 import AdvertResponse from "../../payload/response/AdvertResponse";
-import ProductImage from "../../components/ProductImage/ProductImage";
+import ProductImage from "../../components/ProtectedImage/ProtectedImage";
+import ProtectedImage from "../../components/ProtectedImage/ProtectedImage";
+import DealerResponse from "../../payload/response/DealerResponse";
+import { updateAdvertStatus } from "../../services/advertService";
+import WidgetCard from "../../components/WidgetCard/WidgetCard";
+import adverts from "../../assets/image/adverts";
+import products from "../../assets/image/products";
 
 const DealerDetail = () => {
   const { id } = useParams();
   const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification();
   const navigation = useNavigate();
+  const queryClient = useQueryClient();
+  const [advertList, setAdverts] = useState<AdvertResponse[]>([]);
   const { data, isPending, isFetching, isError, isSuccess } = useQuery({
     queryFn: () => getDealerById(Number(id)),
-    queryKey: ["dealer"],
+    queryKey: ["dealer" + id],
     retry: 1,
   });
-
+  const {
+    data: dealerSummary,
+    isLoading: dealerSummaryLoading,
+    isFetching: summaryFetching,
+  } = useQuery({
+    queryFn: () => getDealerDetailSummary(Number(id)),
+    queryKey: ["dealerSummary" + id],
+    retry: 1,
+  });
+  console.log(dealerSummary);
   useEffect(() => {
     if (data?.entity.dealer) {
       form.setFieldsValue(data?.entity.dealer);
+    }
+    if (data?.entity.adverts) {
+      setAdverts(data?.entity.adverts);
     }
   }, [isSuccess]);
 
   if (isError) {
     navigation("/404");
   }
+  const updateStatus = useMutation({
+    mutationFn: (advertId: number) => {
+      return updateAdvertStatus(advertId);
+    },
+    onSuccess: (data, variables) => {
+      if (data?.isSuccessful) {
+        var advert = advertList.find((x) => x.id === variables);
+        if (advert) {
+          advert.isActive = !advert.isActive;
+          setAdverts([...advertList]);
+        }
 
+        api.success({
+          message: "Başarılı",
+          description: "İlan başarıyla güncellendi.",
+        });
+      } else {
+        api.error({
+          message: "Hata",
+          description: "İlan güncellenirken bir hata oluştu.",
+        });
+      }
+    },
+  });
+
+  const updateDealerForAdmin = useMutation({
+    mutationFn: (dealer: DealerResponse) => {
+      return updateDealer({ ...dealer, id: Number(id) });
+    },
+
+    onSuccess: () => {
+      if (data?.isSuccessful) {
+        api.success({
+          message: "Başarılı",
+          description: "Bayi başarıyla güncellendi.",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["dealer" + id],
+        });
+      } else {
+        api.error({
+          message: "Hata",
+          description: "Bayi güncellenirken bir hata oluştu.",
+        });
+      }
+    },
+  });
   const columns = [
     {
       title: "Resim",
@@ -50,7 +123,7 @@ const DealerDetail = () => {
         return (
           <ProductImage
             imageUrl={record?.product.images?.[0]?.imageUrl || "error"}
-            productName={record.product.name}
+            name={record.product.name}
           />
         );
       },
@@ -110,8 +183,15 @@ const DealerDetail = () => {
     },
     {
       title: "Yayınlanma Tarihi",
-      dataIndex: "publishDate",
-      key: "publishDate",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: any, record: any) => {
+        return (
+          <Space>
+            <span>{dayjs(record.createdAt).format("DD.MM.YYYY")}</span>
+          </Space>
+        );
+      },
     },
     {
       title: "Durum",
@@ -120,43 +200,92 @@ const DealerDetail = () => {
       render: (text: any, record: any) => {
         return (
           <Space>
-            <Switch
-              checkedChildren="Aktif"
-              unCheckedChildren="Pasif"
-              onChange={(value) => {}}
-              checked={record.isActive}
-            />
+            <Popconfirm
+              placement="bottomLeft"
+              title="Silmek istediğinize emin misiniz?"
+              description="Bu işlem geri alınamaz ve tüm veriler silinecektir."
+              onConfirm={() => {
+                updateStatus.mutate(record.id);
+              }}
+              okText="Evet"
+              cancelText="Hayır"
+            >
+              <Switch
+                checkedChildren="Aktif"
+                unCheckedChildren="Pasif"
+                onChange={(value) => {}}
+                checked={record.isActive}
+              />
+            </Popconfirm>
           </Space>
         );
       },
     },
-    {
-      title: "İşlem",
-      dataIndex: "action",
-      key: "action",
-      width: "30%",
-      render: (text: any, record: any) => {
-        return (
-          <Button onClick={() => {}} type="primary" style={{ marginLeft: 10 }}>
-            <EditFilled />
-          </Button>
-        );
-      },
-    },
   ];
-
   const handleFormSubmit = (values: any) => {
-    console.log("Updated Dealer Info:", values);
+    updateDealerForAdmin.mutate(values);
   };
-
   return (
     <div style={{ padding: "20px", backgroundColor: "#f0f2f5" }}>
+      {contextHolder}
       <Spin spinning={isPending || isFetching}>
+        <Row
+          wrap
+          gutter={[16, 16]}
+          style={{ marginBottom: "20px" }}
+          justify="start"
+        >
+          <Col xs={24} sm={24} md={24}>
+            <WidgetCard
+              loading={dealerSummaryLoading || summaryFetching}
+              title="Abonelik Bilgileri"
+              color={dealerSummary?.entity.subscription.color}
+              value={
+                dealerSummary?.entity.subscription.daysRemaining.toString() +
+                " Gün"
+              }
+              antIcon={
+                <SubnodeOutlined
+                  style={{
+                    color: "#fff",
+                    fontSize: "24px",
+                  }}
+                />
+              }
+            />
+          </Col>
+          <Col xs={24} sm={12} md={12}>
+            <WidgetCard
+              loading={dealerSummaryLoading || summaryFetching}
+              title="Toplam yayındaki ilan sayısı"
+              value={dealerSummary?.entity.totalActiveAdvert.toString()}
+              icon={adverts}
+            />
+          </Col>
+          <Col xs={24} sm={12} md={12}>
+            <WidgetCard
+              loading={dealerSummaryLoading || summaryFetching}
+              title="Toplam yayında olmayan ilan sayısı"
+              value={dealerSummary?.entity.totalInactiveAdvert.toString()}
+              icon={adverts}
+            />
+          </Col>
+        </Row>
         <Card
           title="Bayi Bilgileri"
           bordered={true}
           style={{ marginBottom: "20px", background: "#fff" }}
         >
+          <div style={{ marginBottom: "20px" }}>
+            <ProtectedImage
+              imageUrl={data?.entity.dealer?.companyImage || "error"}
+              name={
+                data?.entity.dealer.firstName +
+                " " +
+                data?.entity.dealer.lastName
+              }
+            />
+          </div>
           <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
             <Row gutter={16}>
               <Col span={12}>
@@ -213,7 +342,7 @@ const DealerDetail = () => {
                   label="Onaylı Mı?"
                   valuePropName="checked"
                 >
-                  <Switch />
+                  <Switch disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -235,10 +364,9 @@ const DealerDetail = () => {
         <Card title="İlanlar" bordered={true} style={{ background: "#fff" }}>
           <Table
             loading={isPending || isFetching}
-            virtual
-            scroll={{ x: 1500, y: 300 }}
+            scroll={{ x: 1300 }}
             columns={columns}
-            dataSource={data?.entity.adverts.map((item: any) => ({
+            dataSource={advertList.map((item: any) => ({
               ...item,
               key: item.id,
             }))}

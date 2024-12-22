@@ -15,22 +15,48 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../../components/Logo/Logo";
+import { useMutation } from "@tanstack/react-query";
+import { forgotPassword } from "../../services/userService";
+import { onError } from "../../helper/helper";
 
 type FieldType = {
   email?: string;
-  password?: string;
 };
 const { Title } = Typography;
 const ForgotPassword: React.FC = () => {
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {};
+  const resetPassword = useMutation({
+    mutationFn: async (email: string) => {
+      return forgotPassword(email);
+    },
+    onError: (er: any) => {
+      onError(er, api);
+    },
+    onSuccess: (res) => {
+      if (res.isSuccessful) {
+        api.success({
+          message: "Başarılı",
+          description: `Şifre sıfırlama bağlantısı e-mail adresinize gönderildi.`,
+          placement: "topRight",
+        });
+      } else {
+        api.error({
+          message: "Hata",
+          description: String(res.exceptionMessage) || "Bir hata oluştu.",
+          placement: "topRight",
+        });
+      }
+      form.resetFields();
+    },
+  });
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    if (values.email) {
+      resetPassword.mutate(values.email);
+    }
   };
 
   return (
@@ -72,11 +98,11 @@ const ForgotPassword: React.FC = () => {
 
         <Col xs={24} sm={24} md={12}>
           <Form
+            form={form}
             layout="vertical"
             name="basic"
             style={{ maxWidth: "100%" }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Flex justify="center" style={{ marginBottom: 30 }}>
@@ -92,7 +118,7 @@ const ForgotPassword: React.FC = () => {
                 { required: true, message: "Lütfen e-mail adresinizi girin!" },
               ]}
             >
-              <Input />
+              <Input type="email" />
             </Form.Item>
 
             <Form.Item label={null}>

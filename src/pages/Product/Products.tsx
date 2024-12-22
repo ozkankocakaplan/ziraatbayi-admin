@@ -7,7 +7,7 @@ import {
 } from "../../services/productService";
 import ProductResponse from "../../payload/response/ProductResponse";
 import { EditFilled } from "@ant-design/icons";
-import ProductImage from "../../components/ProductImage/ProductImage";
+import ProductImage from "../../components/ProtectedImage/ProtectedImage";
 const { Title } = Typography;
 export default function Products() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function Products() {
               return (
                 <ProductImage
                   imageUrl={record?.images?.[0]?.imageUrl || "error"}
-                  productName={record.name}
+                  name={record.name}
                 />
               );
             },
