@@ -49,7 +49,7 @@ export default function Categories() {
   };
   const recursive = (data: RootCategoryResponse[], i: number) => {
     let datas = [] as CategoryType[];
-    data.map((item, index) => {
+    data?.map?.((item, index) => {
       let object = {
         id: item.id,
         name: item.name,

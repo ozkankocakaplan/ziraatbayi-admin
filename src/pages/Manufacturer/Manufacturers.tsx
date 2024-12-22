@@ -110,7 +110,7 @@ export default function Manufacturers() {
             },
           },
         ]}
-        dataSource={data?.list.map((item) => ({
+        dataSource={data?.list?.map?.((item) => ({
           ...item,
           key: item.id,
         }))}

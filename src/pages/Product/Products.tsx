@@ -50,7 +50,7 @@ export default function Products() {
         </Button>
       </Flex>
       <Table<ProductResponse>
-        dataSource={data?.list.map((item) => ({ ...item, key: item.id }))}
+        dataSource={data?.list?.map?.((item) => ({ ...item, key: item.id }))}
         loading={isLoading || isFetching}
         virtual
         scroll={{ x: 1500 }}
