@@ -20,7 +20,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 402) {
       console.error("Yetkilendirme hatası: Oturumunuz sona ermiş olabilir.");
     }
     return Promise.reject(error);
