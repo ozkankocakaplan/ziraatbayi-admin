@@ -45,7 +45,7 @@ const Dealer: React.FC = () => {
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
-
+  console.log(dealers);
   const handleChange: OnChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
     setSortedInfo(sorter as Sorts);

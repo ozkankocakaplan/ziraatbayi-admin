@@ -32,6 +32,7 @@ import { updateAdvertStatus } from "../../services/advertService";
 import WidgetCard from "../../components/WidgetCard/WidgetCard";
 import adverts from "../../assets/image/adverts";
 import products from "../../assets/image/products";
+import { onError } from "../../helper/helper";
 
 const DealerDetail = () => {
   const { id } = useParams();
@@ -49,15 +50,18 @@ const DealerDetail = () => {
     data: dealerSummary,
     isLoading: dealerSummaryLoading,
     isFetching: summaryFetching,
+    error: er,
+    refetch,
   } = useQuery({
     queryFn: () => getDealerDetailSummary(Number(id)),
     queryKey: ["dealerSummary" + id],
     retry: 1,
   });
-  console.log(dealerSummary);
+
   useEffect(() => {
     if (data?.entity.dealer) {
       form.setFieldsValue(data?.entity.dealer);
+      console.log(data?.entity.dealer);
     }
     if (data?.entity.adverts) {
       setAdverts(data?.entity.adverts);
@@ -112,6 +116,9 @@ const DealerDetail = () => {
           description: "Bayi güncellenirken bir hata oluştu.",
         });
       }
+    },
+    onError: (error: any) => {
+      onError(error, api);
     },
   });
   const columns = [
@@ -239,10 +246,10 @@ const DealerDetail = () => {
             <WidgetCard
               loading={dealerSummaryLoading || summaryFetching}
               title="Abonelik Bilgileri"
-              color={dealerSummary?.entity.subscription.color}
+              color={dealerSummary?.entity?.subscription?.color}
               value={
-                dealerSummary?.entity.subscription.daysRemaining.toString() +
-                " Gün"
+                (dealerSummary?.entity?.subscription?.daysRemaining?.toString() ||
+                  0) + " Gün"
               }
               antIcon={
                 <SubnodeOutlined
@@ -321,6 +328,18 @@ const DealerDetail = () => {
               </Col>
               <Col span={12}>
                 <Form.Item name="taxOffice" label="Vergi Dairesi">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item name="gnlNumber" label="GLN Numarası">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="companyName" label="Firma Adı">
                   <Input />
                 </Form.Item>
               </Col>
