@@ -42,7 +42,7 @@ const DealerDetail = () => {
   const queryClient = useQueryClient();
   const [advertList, setAdverts] = useState<AdvertResponse[]>([]);
   const { data, isPending, isFetching, isError, isSuccess } = useQuery({
-    queryFn: () => getDealerById(Number(id)),
+    queryFn: () => getDealerById(Number(id)), //dealerId
     queryKey: ["dealer" + id],
     retry: 1,
   });
@@ -53,7 +53,7 @@ const DealerDetail = () => {
     error: er,
     refetch,
   } = useQuery({
-    queryFn: () => getDealerDetailSummary(Number(id)),
+    queryFn: () => getDealerDetailSummary(Number(id)), //dealerId
     queryKey: ["dealerSummary" + id],
     retry: 1,
   });

@@ -211,7 +211,7 @@ const Dealer: React.FC = () => {
           </Popconfirm>
           <Button
             onClick={() => {
-              navigate(`/admin/dealer/${record.dealerId}`);
+              navigate(`/admin/dealer/${record.id}`);
             }}
             type="primary"
           >
