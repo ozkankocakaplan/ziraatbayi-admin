@@ -82,7 +82,9 @@ const DealerDetail = () => {
           advert.isActive = !advert.isActive;
           setAdverts([...advertList]);
         }
-
+        queryClient.invalidateQueries({
+          queryKey: ["dealerSummary" + id],
+        });
         api.success({
           message: "Başarılı",
           description: "İlan başarıyla güncellendi.",
@@ -109,6 +111,9 @@ const DealerDetail = () => {
         });
         queryClient.invalidateQueries({
           queryKey: ["dealer" + id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["dealerSummary" + id],
         });
       } else {
         api.error({
