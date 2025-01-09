@@ -1,34 +1,74 @@
 import React from "react";
 import { AxisOptions, Chart } from "react-charts";
 import ResizableBox from "./ResizableBox";
-import useDemoConfig from "../../hooks/useDemoConfig";
+
+interface MonthlyStats {
+  month: number;
+  newAdvertCount: number;
+  newDealerCount: number;
+}
+
+type ChartData = {
+  primary: string;
+  secondary: number;
+}
+
+const defaultData = [{
+  label: "Veri Yok",
+  data: [{ primary: "Ocak", secondary: 0 }]
+}];
+
 export default function Bar({
   title,
   dataType,
+  data: monthlyStats,
 }: {
   title: string;
   dataType: "ordinal" | "linear" | "time";
+  data?: MonthlyStats[];
 }) {
-  const { data, randomizeData } = useDemoConfig({
-    series: 1,
-    dataType: dataType,
-  });
+  const chartData = React.useMemo<{ label: string; data: ChartData[] }[]>(() => {
+    if (!monthlyStats?.length) return defaultData;
 
-  const primaryAxis = React.useMemo<
-    AxisOptions<(typeof data)[number]["data"][number]>
-  >(
+    const sortedData = [...monthlyStats].sort((a, b) => a.month - b.month);
+    const months = [
+      "Ocak",
+      "Şubat",
+      "Mart",
+      "Nisan",
+      "Mayıs",
+      "Haziran",
+      "Temmuz",
+      "Ağustos",
+      "Eylül",
+      "Ekim",
+      "Kasım",
+      "Aralık",
+    ];
+
+    return [
+      {
+        label: title.includes("Müşteri") ? "Bayi Sayısı" : "İlan Sayısı",
+        data: sortedData.map((stat) => ({
+          primary: months[stat.month - 1],
+          secondary: title.includes("Müşteri") ? stat.newDealerCount : stat.newAdvertCount,
+        })),
+      },
+    ];
+  }, [monthlyStats, title]);
+
+  const primaryAxis = React.useMemo<AxisOptions<ChartData>>(
     () => ({
       getValue: (datum) => datum.primary,
     }),
     []
   );
 
-  const secondaryAxes = React.useMemo<
-    AxisOptions<(typeof data)[number]["data"][number]>[]
-  >(
+  const secondaryAxes = React.useMemo<AxisOptions<ChartData>[]>(
     () => [
       {
         getValue: (datum) => datum.secondary,
+        elementType: "bar",
       },
     ],
     []
@@ -38,7 +78,7 @@ export default function Bar({
     <ResizableBox title={title}>
       <Chart
         options={{
-          data,
+          data: chartData,
           primaryAxis,
           secondaryAxes,
         }}

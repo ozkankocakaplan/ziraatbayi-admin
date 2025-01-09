@@ -9,3 +9,11 @@ export const updateAdvertStatus = async (
   );
   return response.data;
 };
+export const deleteAdvert = async (
+  advertId: number
+): Promise<ServiceResponse<Boolean>> => {
+  const response = await apiClient.delete(
+    `/api/advert/delete-advert/${advertId}`
+  );
+  return response.data;
+};

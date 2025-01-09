@@ -21,6 +21,7 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 import Profile from "../pages/Profile/Profile";
 import ChangePassword from "../pages/Auth/ChangePassword";
 import EditPlan from "../pages/Plans/EditPlan";
+import Plans from "../pages/Plans/Plans";
 
 const router = createBrowserRouter(
   [
@@ -105,7 +106,11 @@ const router = createBrowserRouter(
           element: <ChangePassword />,
         },
         {
-          path: "plans/edit",
+          path: "plans",
+          element: <Plans />,
+        },
+        {
+          path: "plans/edit/:id",
           element: <EditPlan />,
         },
       ],

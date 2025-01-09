@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDashboardStatistics } from "../../services/statisticService";
 import WidgetCard from "../../components/WidgetCard/WidgetCard";
 import Bar from "../../components/Charts/Bar";
+import { getAdvertAndDealerCountForYearly } from "../../services/reportService";
 
 export default function Home() {
   const { data, isPending, isFetching } = useQuery({
@@ -14,6 +15,11 @@ export default function Home() {
     queryFn: getDashboardStatistics,
   });
 
+  const { data: statistic } = useQuery({
+    queryKey: ["advert-dealer-count-yearly"],
+    queryFn: () => getAdvertAndDealerCountForYearly(new Date().getFullYear()),
+  });
+ 
   return (
     <>
       <Row wrap gutter={[16, 16]} justify="start">
@@ -43,9 +49,16 @@ export default function Home() {
         </Col>
       </Row>
       <Col span={24}>
-        <Bar dataType="ordinal" title="Aylık Müşteri Kazanımı" />
-        <Bar dataType="time" title="Günlük İlan Ekleme Oranı" />
-        <Bar dataType="time" title="Günlük Mesajlaşma Oranı" />
+        <Bar 
+          dataType="ordinal" 
+          title="Aylık Müşteri Kazanımı" 
+          data={statistic?.entity.monthlyStats}
+        />
+        <Bar 
+          dataType="ordinal" 
+          title="Günlük İlan Ekleme Oranı" 
+          data={statistic?.entity.monthlyStats}
+        />
       </Col>
     </>
   );

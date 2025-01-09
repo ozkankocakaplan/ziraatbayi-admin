@@ -25,35 +25,38 @@ export default function SelectCategory<T>({
       datas.push(rootCategory);
     }
     categories?.list.map((item, index) => {
-      let object = {
-        title: item.name,
-        value: item.id,
-      } as any;
-      if (item?.children?.length > 0) {
-        if (isOnlySelectSub) {
-          object.disabled = true;
+      if (item.isActive) {
+        let object = {
+          title: item.name,
+          value: item.id,
+        } as any;
+        if (item?.children?.length > 0) {
+          if (isOnlySelectSub) {
+            object.disabled = true;
+          }
+          object.children = recursive(item.children, index);
         }
-        object.children = recursive(item.children, index);
+        datas.push(object);
       }
-
-      datas.push(object);
     });
     return categories ? datas : [];
   };
   const recursive = (data: any[], i: number) => {
     let datas = [] as any[];
     data.map((item, index) => {
-      let object = {
-        title: item.name,
-        value: item.id,
-      } as any;
-      if (item?.children?.length > 0) {
-        if (isOnlySelectSub) {
-          object.disabled = true;
+      if (item.isActive) {
+        let object = {
+          title: item.name,
+          value: item.id,
+        } as any;
+        if (item?.children?.length > 0) {
+          if (isOnlySelectSub) {
+            object.disabled = true;
+          }
+          object.children = recursive(item.children, index);
         }
-        object.children = recursive(item.children, index);
+        datas.push(object);
       }
-      datas.push(object);
     });
     return datas;
   };

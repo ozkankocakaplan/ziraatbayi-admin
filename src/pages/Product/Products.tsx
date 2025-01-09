@@ -52,7 +52,7 @@ export default function Products() {
       <Table<ProductResponse>
         dataSource={data?.list?.map?.((item) => ({ ...item, key: item.id }))}
         loading={isLoading || isFetching}
-        virtual
+   
         scroll={{ x: 1500 }}
         columns={[
           {

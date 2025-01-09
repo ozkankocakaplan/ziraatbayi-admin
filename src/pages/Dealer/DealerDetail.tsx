@@ -14,7 +14,7 @@ import {
   notification,
   Popconfirm,
 } from "antd";
-import { EditFilled, SubnodeOutlined } from "@ant-design/icons";
+import { DeleteFilled, EditFilled, SubnodeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getDealerById,
@@ -28,7 +28,7 @@ import AdvertResponse from "../../payload/response/AdvertResponse";
 import ProductImage from "../../components/ProtectedImage/ProtectedImage";
 import ProtectedImage from "../../components/ProtectedImage/ProtectedImage";
 import DealerResponse from "../../payload/response/DealerResponse";
-import { updateAdvertStatus } from "../../services/advertService";
+import { deleteAdvert, updateAdvertStatus } from "../../services/advertService";
 import WidgetCard from "../../components/WidgetCard/WidgetCard";
 import adverts from "../../assets/image/adverts";
 import products from "../../assets/image/products";
@@ -42,7 +42,7 @@ const DealerDetail = () => {
   const queryClient = useQueryClient();
   const [advertList, setAdverts] = useState<AdvertResponse[]>([]);
   const { data, isPending, isFetching, isError, isSuccess } = useQuery({
-    queryFn: () => getDealerById(Number(id)), //dealerId
+    queryFn: () => getDealerById(Number(id)),
     queryKey: ["dealer" + id],
     retry: 1,
   });
@@ -53,7 +53,7 @@ const DealerDetail = () => {
     error: er,
     refetch,
   } = useQuery({
-    queryFn: () => getDealerDetailSummary(Number(id)), //dealerId
+    queryFn: () => getDealerDetailSummary(Number(id)),
     queryKey: ["dealerSummary" + id],
     retry: 1,
   });
@@ -77,11 +77,13 @@ const DealerDetail = () => {
     },
     onSuccess: (data, variables) => {
       if (data?.isSuccessful) {
-        var advert = advertList.find((x) => x.id === variables);
-        if (advert) {
-          advert.isActive = !advert.isActive;
-          setAdverts([...advertList]);
-        }
+        let newAdverts = advertList.map((item) => {
+          if (item.id === variables) {
+            return { ...item, isActive: !item.isActive };
+          }
+          return item;
+        });
+        setAdverts(newAdverts);
         queryClient.invalidateQueries({
           queryKey: ["dealerSummary" + id],
         });
@@ -124,6 +126,29 @@ const DealerDetail = () => {
     },
     onError: (error: any) => {
       onError(error, api);
+    },
+  });
+  const handleDeleteAdvert = useMutation({
+    mutationFn: (advertId: number) => {
+      return deleteAdvert(advertId);
+    },
+    onSuccess: (data, variables) => {
+      if (data?.isSuccessful) {
+        let newAdverts = advertList.filter((item) => item.id !== variables);
+        setAdverts(newAdverts);
+        queryClient.invalidateQueries({
+          queryKey: ["dealerSummary" + id],
+        });
+        api.success({
+          message: "Başarılı",
+          description: "İlan başarıyla silindi.",
+        });
+      } else {
+        api.error({
+          message: "Hata",
+          description: "İlan silinirken bir hata oluştu.",
+        });
+      }
     },
   });
   const columns = [
@@ -214,8 +239,10 @@ const DealerDetail = () => {
           <Space>
             <Popconfirm
               placement="bottomLeft"
-              title="Silmek istediğinize emin misiniz?"
-              description="Bu işlem geri alınamaz ve tüm veriler silinecektir."
+              title={`İlanı ${
+                record.isActive ? "pasif" : "aktif"
+              } hale getirmek istediğinize emin misiniz?`}
+              description="İlanı aktif hale getirmek istediğinize emin misiniz?"
               onConfirm={() => {
                 updateStatus.mutate(record.id);
               }}
@@ -228,6 +255,30 @@ const DealerDetail = () => {
                 onChange={(value) => {}}
                 checked={record.isActive}
               />
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+    {
+      title: "İşlem",
+      key: "action",
+      render: (text: any, record: AdvertResponse) => {
+        return (
+          <Space>
+            <Popconfirm
+              placement="bottomLeft"
+              title={"Silmek istediğinize emin misiniz?"}
+              description="Bu işlem geri alınamaz ve tüm veriler silinecektir."
+              onConfirm={() => {
+                handleDeleteAdvert.mutate(record.id);
+              }}
+              okText="Evet"
+              cancelText="Hayır"
+            >
+              <Button type="primary" danger>
+                <DeleteFilled />
+              </Button>
             </Popconfirm>
           </Space>
         );

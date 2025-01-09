@@ -120,8 +120,8 @@ const AppLayout: React.FC = () => {
                   label: "Şifre Değiştir",
                 },
                 {
-                  key: "/admin/plans/edit",
-                  label: "Plan Düzenle",
+                  key: "/admin/plans",
+                  label: "Planlar",
                 },
               ],
             },
