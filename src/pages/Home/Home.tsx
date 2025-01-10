@@ -56,7 +56,7 @@ export default function Home() {
         />
         <Bar 
           dataType="ordinal" 
-          title="Günlük İlan Ekleme Oranı" 
+          title="Aylık İlan Ekleme Oranı" 
           data={statistic?.entity.monthlyStats}
         />
       </Col>
