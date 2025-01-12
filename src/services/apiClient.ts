@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://195.85.207.129:6868",
+  baseURL: "https://api.ziraatbayi.com",
   timeout: 10000,
 });
 
