@@ -8,7 +8,7 @@ interface DealerResponse {
   email: string;
   phone: string;
   companyName: string;
-  gnlNumber: string;
+  glnNumber: string;
   taxNumber: string;
   taxOffice: string;
   isActive: boolean;

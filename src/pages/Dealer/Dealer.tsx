@@ -126,7 +126,7 @@ const Dealer: React.FC = () => {
       ellipsis: true,
       render: (r, record) => (
         <Space key={record.id} size="middle">
-          <span>{record.gnlNumber}</span>
+          <span>{record.glnNumber}</span>
           <CopyToClipboard
             onCopy={() => {
               api.info({
@@ -135,7 +135,7 @@ const Dealer: React.FC = () => {
                 placement: "topRight",
               });
             }}
-            text={record.gnlNumber}
+            text={record.glnNumber}
           >
             <CopyOutlined />
           </CopyToClipboard>

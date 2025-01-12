@@ -390,7 +390,7 @@ const DealerDetail = () => {
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item name="gnlNumber" label="GLN Numarası">
+                <Form.Item name="glnNumber" label="GLN Numarası">
                   <Input />
                 </Form.Item>
               </Col>
