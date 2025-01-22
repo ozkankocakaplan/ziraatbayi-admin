@@ -8,15 +8,30 @@ import {
 import ProductResponse from "../../payload/response/ProductResponse";
 import { EditFilled } from "@ant-design/icons";
 import ProductImage from "../../components/ProtectedImage/ProtectedImage";
+import { useState, useEffect } from "react";
 const { Title } = Typography;
 export default function Products() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 50,
+    total: 0,
+  });
   const [api, contextHolder] = notification.useNotification();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["products"],
-    queryFn: getProducts,
+    queryKey: ["products", pagination.current, pagination.pageSize],
+    queryFn: () => getProducts(pagination.current, pagination.pageSize),
   });
+
+  useEffect(() => {
+    if (data?.totalPage) {
+      setPagination((prev) => ({
+        ...prev,
+        total: data.totalPage * pagination.pageSize,
+      }));
+    }
+  }, [data?.totalPage, pagination.pageSize]);
 
   const handleChangeProductStatus = useMutation({
     mutationFn: updateProductStatus,
@@ -52,8 +67,19 @@ export default function Products() {
       <Table<ProductResponse>
         dataSource={data?.list?.map?.((item) => ({ ...item, key: item.id }))}
         loading={isLoading || isFetching}
-   
         scroll={{ x: 1500 }}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+          onChange: (page, pageSize) => {
+            setPagination((prev) => ({
+              ...prev,
+              current: page,
+              pageSize: pageSize,
+            }));
+          },
+        }}
         columns={[
           {
             title: "Resim",

@@ -6,4 +6,5 @@ export default interface ServiceResponse<T> {
   entity: T;
   list: T[];
   message: string;
+  totalPage: number;
 }

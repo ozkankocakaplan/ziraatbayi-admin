@@ -72,14 +72,6 @@ export default function AddProduct() {
         >
           <Form.Item
             label="Ürün Resimleri"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-            noStyle
           >
             <Upload
               listType="picture-card"
@@ -87,7 +79,6 @@ export default function AddProduct() {
               beforeUpload={() => false}
               onChange={({ fileList }) => setFileList(fileList)}
               onPreview={(file) => {
-                console.log(file);
                 setPreviewOpen(true);
                 setPreviewImage(file.thumbUrl || "");
               }}
@@ -98,18 +89,18 @@ export default function AddProduct() {
                 <div style={{ marginTop: 8 }}>Resim Ekle</div>
               </div>
             </Upload>
-            {previewImage && (
-              <Image
-                wrapperStyle={{ display: "none" }}
-                preview={{
-                  visible: previewOpen,
-                  onVisibleChange: (visible) => setPreviewOpen(visible),
-                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                }}
-                src={previewImage}
-              />
-            )}
           </Form.Item>
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: "none" }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
+              }}
+              src={previewImage}
+            />
+          )}
 
           <Form.Item
             style={{ marginTop: 20 }}

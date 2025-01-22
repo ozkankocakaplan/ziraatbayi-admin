@@ -18,11 +18,12 @@ export const createProduct = async (
   );
   return response.data;
 };
-export const getProducts = async (): Promise<
-  ServiceResponse<ProductResponse>
-> => {
+export const getProducts = async (
+  pageNumber: number,
+  pageSize: number
+): Promise<ServiceResponse<ProductResponse>> => {
   const response = await apiClient.get<ServiceResponse<ProductResponse>>(
-    "/api/product/products"
+    `/api/product/products/${pageNumber}?pageSize=${pageSize}`
   );
   return response.data;
 };
