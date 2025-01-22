@@ -63,6 +63,11 @@ export default function Manufacturers() {
       </Flex>
       <Table<ManufacturerResponse>
         loading={isPending || isFetching}
+        pagination={{
+          defaultPageSize: 50,
+          showSizeChanger: true,
+          pageSizeOptions: ["50", "100", "200"],
+        }}
         columns={[
           {
             title: "Üretici Adı",

@@ -96,11 +96,6 @@ export default function Categories() {
       </Flex>
       <Table<CategoryType>
         loading={isLoading || isFetching}
-        pagination={{
-          defaultPageSize: 50,
-          showSizeChanger: true,
-          pageSizeOptions: ['50', '100', '200']
-        }}
         columns={[
           {
             title: "Kategori Adı",
